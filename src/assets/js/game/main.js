@@ -28,6 +28,8 @@ export class SceneMain extends Phaser.Scene {
     // this.load.image('exteriorsB', gamePath + 'walls-floors/ext/PSF_A3_Exterior.png')
     this.load.image('wallJunctions', gamePath + 'walls-floors/int/wallJunctions.png')
     this.load.image('candleLights', gamePath + 'effects/CandleGlow.png')
+    this.load.image('lightGlowB', gamePath + 'effects/LightGlowB.png')
+    this.load.image('lightGlowC', gamePath + 'effects/LightGlowC.png')
     this.load.spritesheet(
       'characters',
       gamePath + 'sprites/humans/HC_Humans1B.png',
@@ -52,12 +54,30 @@ export class SceneMain extends Phaser.Scene {
     const delapidated = this.map.addTilesetImage('Delapidated', 'delapidated')
     const bootcampItems = this.map.addTilesetImage('bootCampInterior', 'bootcampItems')
     const candleLights = this.map.addTilesetImage('CandleGlow', 'candleLights')
+    const lightGlowB = this.map.addTilesetImage('LightGlowB', 'lightGlowB')
+    const lightGlowC = this.map.addTilesetImage('LightGlowC', 'lightGlowC')
     // this.map.addTilesetImage('floor', 'floor');
     // this.map.addTilesetImage('floor2', 'floor2');
     // this.map.addTilesetImage('HospitalAlt', 'hospitalAlt');
-    const livingRoomTiles = [bootcampItems, delapidated]
-    const kitchenTiles = [bootcampItems, delapidated]
-    const wallTiles = [walls, floor, wallJunctions, delapidated]
+    const livingRoomTiles = [
+      bootcampItems,
+      delapidated
+    ]
+    const kitchenTiles = [
+      bootcampItems,
+      delapidated
+    ]
+    const wallTiles = [
+      walls,
+      floor,
+      wallJunctions,
+      delapidated
+    ]
+    const lightAndShadows = [
+      lightGlowB,
+      lightGlowC,
+      candleLights
+    ]
     this.floorLayer = this.map.createStaticLayer('floor2', floor, 0, 0)
     this.walls = this.map.createStaticLayer('walls', wallTiles, 0, 0)
     this.livingRoomLow = this.map.createStaticLayer('living-room-low', livingRoomTiles, 0, 0)
@@ -69,12 +89,14 @@ export class SceneMain extends Phaser.Scene {
     this.kitchenUp = this.map.createStaticLayer('kitchen-up', kitchenTiles, 0, 0)
     this.wallsUp = this.map.createStaticLayer('walls-up', wallTiles, 0, 0)
     this.collisions = this.map.createStaticLayer('collisions', candleLights, 0, 0)
+    this.shadowsLights = this.map.createStaticLayer('shadows-lights', lightAndShadows, 0, 0)
     this.wallsUp.setDepth(1)
+    this.shadowsLights.setDepth(2)
     
     
 
     const spawnPoint = this.map.findObject("Objects", obj => obj.name === "Spawn point")
-    this.player = new Player(this, spawnPoint.x, spawnPoint.y);
+    this.player = new Player(this, spawnPoint.x, spawnPoint.y - 14);
 
     this.collisions.setCollisionByProperty({ collides: true })
     this.collisions.visible = false
@@ -84,17 +106,6 @@ export class SceneMain extends Phaser.Scene {
     const camera = this.cameras.main
     camera.zoom = 2.5
     camera.startFollow(this.player.sprite)
-
-  // Set up the arrows to control the camera
-    // const cursors = this.input.keyboard.createCursorKeys();
-    // this.controls = new Phaser.Cameras.Controls.FixedKeyControl({
-    //   camera: camera,
-    //   left: cursors.left,
-    //   right: cursors.right,
-    //   up: cursors.up,
-    //   down: cursors.down,
-    //   speed: 0.15
-    // });
 
     // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
     camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
