@@ -5,8 +5,9 @@ const gamePath = './src/assets/images/horror-city/'
 
 export class SceneMain extends Phaser.Scene {
   constructor() {
-    super('SceneMain');
+    super('SceneMain')
   }
+
   preload () {
     this.load.tilemapTiledJSON(
       'apartment',
@@ -16,7 +17,7 @@ export class SceneMain extends Phaser.Scene {
     )
     // this.load.image('aptModern', gamePath + 'objects/int/AptModern.png')
     this.load.image('delapidated', gamePath + 'objects/int/Delapidated.png')
-    // this.load.image('extrasA', gamePath + 'objects/int/ExtrasA.png')
+    this.load.image('extrasA', gamePath + 'objects/int/ExtrasA.png')
     // this.load.image('floor', gamePath + 'walls-floors/int/floor.png')
     this.load.image('floor', gamePath + 'walls-floors/int/floor2.png')
     // this.load.image('hospitalAlt', gamePath + 'objects/int/HospitalAlt.png')
@@ -44,7 +45,7 @@ export class SceneMain extends Phaser.Scene {
 
   create () {
     this.map = this.add.tilemap('apartment')
-    // const aptModern = this.map.addTilesetImage('AptModern', 'aptModern');
+    // const aptModern = this.map.addTilesetImage('AptModern', 'aptModern')
     // const apt = this.add.image(0,0, 'aptModern')
     // Align.scaleToGameW(apt, this.game, 0.5)
     // Align.center(apt, this.game)
@@ -56,9 +57,10 @@ export class SceneMain extends Phaser.Scene {
     const candleLights = this.map.addTilesetImage('CandleGlow', 'candleLights')
     const lightGlowB = this.map.addTilesetImage('LightGlowB', 'lightGlowB')
     const lightGlowC = this.map.addTilesetImage('LightGlowC', 'lightGlowC')
-    // this.map.addTilesetImage('floor', 'floor');
-    // this.map.addTilesetImage('floor2', 'floor2');
-    // this.map.addTilesetImage('HospitalAlt', 'hospitalAlt');
+    const extrasA = this.map.addTilesetImage('ExtrasA', 'extrasA')
+    // this.map.addTilesetImage('floor', 'floor')
+    // this.map.addTilesetImage('floor2', 'floor2')
+    // this.map.addTilesetImage('HospitalAlt', 'hospitalAlt')
     const livingRoomTiles = [
       bootcampItems,
       delapidated
@@ -78,8 +80,15 @@ export class SceneMain extends Phaser.Scene {
       lightGlowC,
       candleLights
     ]
+    const decorTilesets = [
+      bootcampItems,
+      delapidated,
+      floor,
+      extrasA
+    ]
     this.floorLayer = this.map.createStaticLayer('floor2', floor, 0, 0)
     this.walls = this.map.createStaticLayer('walls', wallTiles, 0, 0)
+    this.underPlayer1 = this.map.createStaticLayer('under-player-1', decorTilesets, 0, 0)
     this.livingRoomLow = this.map.createStaticLayer('living-room-low', livingRoomTiles, 0, 0)
     this.livingRoom = this.map.createStaticLayer('living-room', livingRoomTiles, 0, 0)
     this.livingRoomUp = this.map.createStaticLayer('living-room-up', livingRoomTiles, 0, 0)
@@ -90,25 +99,23 @@ export class SceneMain extends Phaser.Scene {
     this.wallsUp = this.map.createStaticLayer('walls-up', wallTiles, 0, 0)
     this.collisions = this.map.createStaticLayer('collisions', candleLights, 0, 0)
     this.shadowsLights = this.map.createStaticLayer('shadows-lights', lightAndShadows, 0, 0)
+    this.abovePlayer1 = this.map.createStaticLayer('above-player-1', decorTilesets, 0, 0)
+
     this.wallsUp.setDepth(1)
-    this.shadowsLights.setDepth(2)
-    
-    
+    this.abovePlayer1.setDepth(2)
+    this.shadowsLights.setDepth(3)
 
     const spawnPoint = this.map.findObject("Objects", obj => obj.name === "Spawn point")
-    this.player = new Player(this, spawnPoint.x, spawnPoint.y - 14);
+    this.player = new Player(this, spawnPoint.x, spawnPoint.y - 14)
 
     this.collisions.setCollisionByProperty({ collides: true })
     this.collisions.visible = false
     this.physics.add.collider(this.player.sprite, this.collisions)
 
-    this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
     const camera = this.cameras.main
-    camera.zoom = 2.5
+    camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
+    camera.zoom = 2
     camera.startFollow(this.player.sprite)
-
-    // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
-    camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
   }
 
   update(time, delta) {

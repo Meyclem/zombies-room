@@ -1,42 +1,28 @@
-/**
- * A class that wraps up our top down player logic. It creates, animates and moves a sprite in
- * response to WASD keys. Call its update method from the scene's update and call its destroy
- * method when you're done with the player.
- */
 export default class Player {
   constructor(scene, x, y) {
     this.scene = scene
 
     const anims = scene.anims
-    anims.create({
-      key: "player-walk-front",
-      frames: anims.generateFrameNumbers("characters", { start: 3, end: 5 }),
-      frameRate: 8,
-      repeat: -1
-    })
-    anims.create({
-      key: "player-walk-left",
-      frames: anims.generateFrameNumbers("characters", { start: 15, end: 17 }),
-      frameRate: 8,
-      repeat: -1
-    })
-    anims.create({
-      key: "player-walk-right",
-      frames: anims.generateFrameNumbers("characters", { start: 27, end: 29 }),
-      frameRate: 8,
-      repeat: -1
-    })
-    anims.create({
-      key: "player-walk-back",
-      frames: anims.generateFrameNumbers("characters", { start: 39, end: 41 }),
-      frameRate: 8,
-      repeat: -1
+    const playerAnimations = [
+      { name: 'player-walk-front', frames: { start: 3, end: 5 } },
+      { name: 'player-walk-left', frames: { start: 15, end: 17 } },
+      { name: 'player-walk-right', frames: { start: 27, end: 29 } },
+      { name: 'player-walk-back', frames: { start: 39, end: 41 } },
+    ]
+
+    playerAnimations.forEach(( { name, frames } ) => {
+      anims.create({
+        key: name,
+        frames: anims.generateFrameNumbers("characters", frames),
+        frameRate: 8,
+        repeat: -1
+      })  
     })
 
     this.sprite = scene.physics.add
       .sprite(x, y, "characters", 0)
-      .setSize(8, 4)
-      .setOffset(4, 26)
+      .setSize(8, 11)
+      .setOffset(4, 21)
 
     // this.sprite.anims.play("player-walk-front")
     // this.sprite.anims.stop()
@@ -53,9 +39,9 @@ export default class Player {
     const sprite = this.sprite
     const speed = 60
     const prevVelocity = sprite.body.velocity.clone()
-
+    // console.log(prevVelocity)
     // Stop any previous movement from the last frame
-    sprite.body.setVelocity(0)
+    // sprite.body.setVelocity(0)
 
     // Horizontal movement
     if (keys.left.isDown) {
@@ -90,6 +76,7 @@ export default class Player {
       if (prevVelocity.y < 0) {
         sprite.setTexture('characters', 16)
       } else if (prevVelocity.y > 0) {
+        console.log(prevVelocity.y)
         sprite.setTexture('characters', 28)
       } else if (prevVelocity.x < 0) {
         sprite.setTexture('characters', 40)
@@ -97,6 +84,7 @@ export default class Player {
         sprite.setTexture('characters', 4)
       }
     }
+    // sprite.body.setVelocity(0)
   }
 
   destroy() {
