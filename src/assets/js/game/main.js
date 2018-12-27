@@ -114,7 +114,8 @@ export class SceneMain extends Phaser.Scene {
 
     const camera = this.cameras.main
     camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
-    camera.zoom = 2
+    camera.zoom = 4
+
     camera.startFollow(this.player.sprite)
   }
 

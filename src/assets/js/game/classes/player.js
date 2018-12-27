@@ -28,6 +28,8 @@ export default class Player {
     // this.sprite.anims.stop()
 
     this.keys = scene.input.keyboard.createCursorKeys()
+
+    this.anim = 'front'
   }
 
   freeze() {
@@ -39,9 +41,9 @@ export default class Player {
     const sprite = this.sprite
     const speed = 60
     const prevVelocity = sprite.body.velocity.clone()
-    // console.log(prevVelocity)
+
     // Stop any previous movement from the last frame
-    // sprite.body.setVelocity(0)
+    sprite.body.setVelocity(0)
 
     // Horizontal movement
     if (keys.left.isDown) {
@@ -62,25 +64,27 @@ export default class Player {
 
     // Update the animation last and give left/right/down animations precedence over up animations
     if (keys.left.isDown) {
+      this.anim = 'left'
       sprite.anims.play("player-walk-left", true)
     } else if (keys.right.isDown) {
+      this.anim = 'right'
       sprite.anims.play('player-walk-right', true)
     } else if (keys.up.isDown) {
+      this.anim = 'back'
       sprite.anims.play("player-walk-back", true)
     } else if (keys.down.isDown) {
+      this.anim = 'front'
       sprite.anims.play("player-walk-front", true)
     } else {
       sprite.anims.stop()
-
       // If we were moving & now we're not, then pick a single idle frame to use
-      if (prevVelocity.y < 0) {
+      if (this.anim === 'left') {
         sprite.setTexture('characters', 16)
-      } else if (prevVelocity.y > 0) {
-        console.log(prevVelocity.y)
+      } else if (this.anim === 'right') {
         sprite.setTexture('characters', 28)
-      } else if (prevVelocity.x < 0) {
+      } else if (this.anim === 'back') {
         sprite.setTexture('characters', 40)
-      } else {
+      } else if (this.anim === 'front') {
         sprite.setTexture('characters', 4)
       }
     }
